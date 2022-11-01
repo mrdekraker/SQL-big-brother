@@ -6,6 +6,8 @@
 
 SQL-BIG-BROTHER is a tool to analyze the corporate structer of your employee database.
 
+# [YOUTUBE: VISUAL DEMO](https://youtu.be/I2qCWEM8sZs)
+
 ## Table of Contents
 
 - [Installation](#installation)
