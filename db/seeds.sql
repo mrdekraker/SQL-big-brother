@@ -25,9 +25,9 @@ INSERT INTO role(title, salary, department_id)
       ('supplier relations', 45000, 6),
       ('customer service rep', 45000, 7),
       ('warehouse foreman', 55000, 8),
-      ('warehouse worker', 45000, 9),
-      ('receptionist', 40000,  10),
-      ('human resources', 55000,  11);
+      ('warehouse worker', 45000, 8),
+      ('receptionist', 40000,  9),
+      ('human resources', 55000,  10);
 
 INSERT INTO employee(first_name, last_name, role_id, manager_id)
   VALUES 

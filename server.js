@@ -42,6 +42,12 @@ const firstPrompt = () => {
           `Add A Department`,
           `Add A Role`,
           `Add An Employee`,
+          `Update An Employee's Role`,
+          `Update Manager for Employee`,
+          `Delete Department`,
+          `Delete Role`,
+          `Delete Employee`,
+          `EXIT THE DATABASE`,
         ],
       },
     ])
@@ -71,6 +77,30 @@ const firstPrompt = () => {
           addEmployee();
           break;
 
+        case `Update An Employee's Role`:
+          updateEmployeeRole();
+          break;
+
+        case `Update Manager for Employee`:
+          updateEmployeeManager();
+          break;
+
+        case `Delete Department`:
+          deleteDepartment();
+          break;
+
+        case `Delete Role`:
+          deleteRole();
+          break;
+
+        case `Delete Employee`:
+          deleteEmployee();
+          break;
+
+        case `EXIT THE DATABASE`:
+          exitDB();
+          break;
+
         default:
           firstPrompt();
           break;
@@ -85,9 +115,9 @@ const viewDeparments = () => {
   db.query(query, (err, res) => {
     if (err) throw err;
     console.log(``);
-    console.log(`========================`);
-    console.log(`VIEWING ALL DEPARTMENTS`);
-    console.log(`========================`);
+    console.log(`=============================`);
+    console.log(`|  VIEWING ALL DEPARTMENTS  |`);
+    console.log(`=============================`);
     console.table(res);
     firstPrompt();
   });
@@ -101,9 +131,9 @@ const viewRoles = () => {
   db.query(query, (err, res) => {
     if (err) throw err;
     console.log(``);
-    console.log(`=================`);
-    console.log(`VIEWING ALL ROLES`);
-    console.log(`=================`);
+    console.log(`=======================`);
+    console.log(`|  VIEWING ALL ROLES  |`);
+    console.log(`=======================`);
     console.table(res);
     firstPrompt();
   });
@@ -119,9 +149,9 @@ const viewAllEmployees = () => {
   db.query(query, (err, res) => {
     if (err) throw err;
     console.log(``);
-    console.log(`========================`);
-    console.log(`VIEWING ALL EMPLOYEES`);
-    console.log(`========================`);
+    console.log(`===========================`);
+    console.log(`|  VIEWING ALL EMPLOYEES  |`);
+    console.log(`===========================`);
     console.table(res);
     firstPrompt();
   });
@@ -141,9 +171,9 @@ const addDepartment = () => {
       db.query(query, [userResponse.departmentName], (err, res) => {
         if (err) throw err;
         console.log(``);
-        console.log(`================`);
-        console.log(`DEPARTMENT ADDED`);
-        console.log(`================`);
+        console.log(`======================`);
+        console.log(`|  DEPARTMENT ADDED  |`);
+        console.log(`======================`);
         console.table(res);
         firstPrompt();
       });
@@ -156,20 +186,34 @@ const addRole = () => {
       {
         type: 'input',
         message: 'What is the title of the role?',
-        name: 'roleName',
+        name: 'title',
+      },
+      {
+        type: 'input',
+        message: 'What is the salary of the role?',
+        name: 'salary',
+      },
+      {
+        type: 'input',
+        message: 'What is the department ID of the role?',
+        name: 'departmentID',
       },
     ])
     .then((userResponse) => {
-      const query = `INSERT INTO role(name) VALUES (?)`;
-      db.query(query, [userResponse.roleName], (err, res) => {
-        if (err) throw err;
-        console.log(``);
-        console.log(`==========`);
-        console.log(`ROLE ADDED`);
-        console.log(`==========`);
-        console.table(res);
-        firstPrompt();
-      });
+      const query = `INSERT INTO role(title, salary, department_id) VALUES (?, ?, ?)`;
+      db.query(
+        query,
+        [userResponse.title, userResponse.salary, userResponse.departmentID],
+        (err, res) => {
+          if (err) throw err;
+          console.log(``);
+          console.log(`================`);
+          console.log(`|  ROLE ADDED  |`);
+          console.log(`================`);
+          console.table(res);
+          firstPrompt();
+        }
+      );
     });
 };
 
@@ -189,12 +233,13 @@ const addEmployee = () => {
       {
         type: 'input',
         message:
-          'What is the role ID of the employee? (1-11) Default is 4, Sales.',
+          'What is the role ID of the employee? (1-13) The default is 5 (Sales). \n 1 - CEO \n 2 - CFO \n 3 - District Manager \n 4 - Regional Manager \n 5 - Sales Rep \n 6 - QA (Quality Assurance) \n 7 - Accountant \n 8 - Supplier Relations \n 9 - Customer Service Rep \n 10 - Warehouse Foreman \n 11 - Warehouse Worker \n 12 - Receptionist \n 13 - Human Resources \n Please enter the number of the role ID.',
         name: 'roleID',
       },
       {
         type: 'input',
-        message: 'What is the manager ID of the employee?',
+        message:
+          'What is the manager ID of the employee? (1-5, 18) The default is 4 (Michael Scott)\n 1 - Alan Brand \n 2 - David Wallace \n 3 - Jan Levinson \n 4 - Michael Scott \n 5 - Josh Porter \n 18 - Darryl Philbin \n Please enter the number of the manager ID.',
         name: 'managerID',
       },
     ])
@@ -212,9 +257,9 @@ const addEmployee = () => {
         (err, res) => {
           if (err) throw err;
           console.log(``);
-          console.log(`================`);
-          console.log(`EMPLOYEE ADDED`);
-          console.log(`================`);
+          console.log(`========================`);
+          console.log(`|    EMPLOYEE ADDED    |`);
+          console.log(`========================`);
           console.table(res);
           firstPrompt();
         }
@@ -222,19 +267,144 @@ const addEmployee = () => {
     });
 };
 
-// !REQUIREMENTS
-// THEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
-// WHEN I choose to view all departments
-// THEN I am presented with a formatted table showing department names and department ids
-// WHEN I choose to view all roles
-// THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
-// WHEN I choose to view all employees
-// THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
-// WHEN I choose to add a department
-// THEN I am prompted to enter the name of the department and that department is added to the database
-// WHEN I choose to add a role
-// THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
-// WHEN I choose to add an employee
-// THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
-// WHEN I choose to update an employee role
-// THEN I am prompted to select an employee to update and their new role and this information is updated in the database
+const updateEmployeeRole = () => {
+  inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'What is the ID of the employee you want to update?',
+        name: 'employeeID',
+      },
+      {
+        type: 'input',
+        message: 'What is the new role ID of the employee?',
+        name: 'roleID',
+      },
+    ])
+    .then((userResponse) => {
+      const query = `UPDATE employee SET role_id = ? WHERE id = ?`;
+      db.query(
+        query,
+        [userResponse.roleID, userResponse.employeeID],
+        (err, res) => {
+          if (err) throw err;
+          console.log(``);
+          console.log(`============================`);
+          console.log(`|  EMPLOYEE ROLE UPDATED   |`);
+          console.log(`============================`);
+          console.table(res);
+          firstPrompt();
+        }
+      );
+    });
+};
+
+const updateEmployeeManager = () => {
+  inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'What is the ID of the employee you want to update?',
+        name: 'employeeID',
+      },
+      {
+        type: 'input',
+        message: 'What is the new manager ID of the employee?',
+        name: 'managerID',
+      },
+    ])
+    .then((userResponse) => {
+      const query = `UPDATE employee SET manager_id = ? WHERE id = ?`;
+      db.query(
+        query,
+        [userResponse.managerID, userResponse.employeeID],
+        (err, res) => {
+          if (err) throw err;
+          console.log(``);
+          console.log(`=============================`);
+          console.log(`|  EMPLOYEE MANAGER UPDATED |`);
+          console.log(`=============================`);
+          console.table(res);
+          firstPrompt();
+        }
+      );
+    });
+};
+
+const deleteDepartment = () => {
+  inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'What is the ID of the department you want to delete?',
+        name: 'departmentID',
+      },
+    ])
+    .then((userResponse) => {
+      const query = `DELETE FROM department WHERE id = ?`;
+      db.query(query, [userResponse.departmentID], (err, res) => {
+        if (err) throw err;
+        console.log(``);
+        console.log(`==========================`);
+        console.log(`|   DEPARTMENT DELETED   |`);
+        console.log(`==========================`);
+        console.table(res);
+        firstPrompt();
+      });
+    });
+};
+
+const deleteRole = () => {
+  inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'What is the ID of the role you want to delete?',
+        name: 'roleID',
+      },
+    ])
+    .then((userResponse) => {
+      const query = `DELETE FROM role WHERE id = ?`;
+      db.query(query, [userResponse.roleID], (err, res) => {
+        if (err) throw err;
+        console.log(``);
+        console.log(`====================`);
+        console.log(`|   ROLE DELETED   |`);
+        console.log(`====================`);
+        console.table(res);
+        firstPrompt();
+      });
+    });
+};
+
+const deleteEmployee = () => {
+  inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'What is the ID of the employee you want to delete?',
+        name: 'employeeID',
+      },
+    ])
+    .then((userResponse) => {
+      const query = `DELETE FROM employee WHERE id = ?`;
+      db.query(query, [userResponse.employeeID], (err, res) => {
+        if (err) throw err;
+        console.log(``);
+        console.log(`========================`);
+        console.log(`|   EMPLOYEE DELETED   |`);
+        console.log(`========================`);
+        console.table(res);
+        firstPrompt();
+      });
+    });
+};
+
+const exitDB = () => {
+  console.log(``);
+  console.log(`======================`);
+  console.log(`|  EXITING DATABASE  |`);
+  console.log(`======================`);
+  console.log(``);
+  process.exit();
+};
