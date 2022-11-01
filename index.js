@@ -8,7 +8,7 @@ const db = mysql.createConnection({
   host: 'localhost',
   // MySQL username,
   user: 'root',
-  // !CHANGE THIS TO FILLER STRING LATER
+  // YOUR MySQL PASSWORD
   password: 'River331!',
   database: 'employeesDB',
 });
@@ -550,13 +550,3 @@ const exitDB = () => {
   console.log(``);
   process.exit();
 };
-
-// SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary FROM employee
-// INNER JOIN role ON (role.id = employee.role_id)
-// INNER JOIN department ON (department.id = role.department_id)
-// ;
-
-// SELECT employee.first_name, employee.last_name, department.name AS Department, role.salary FROM employee
-// INNER JOIN role ON(role.id = employee.role_id)
-// INNER JOIN department ON(department.id = role.department_id)
-// SUM(salary) AS Total Budget FROM role WHERE department_id = ?;
