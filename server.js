@@ -48,6 +48,7 @@ const firstPrompt = () => {
           `Delete Role`,
           `Delete Employee`,
           `Department Budget Total`,
+          `Total Budget`,
           `EXIT THE DATABASE`,
         ],
       },
@@ -100,6 +101,10 @@ const firstPrompt = () => {
 
         case `Department Budget Total`:
           departmentBudget();
+          break;
+
+        case `Total Budget`:
+          totalBudget();
           break;
 
         case `EXIT THE DATABASE`:
@@ -507,17 +512,33 @@ const departmentBudget = () => {
         },
       ])
       .then((userResponse) => {
-        const query = `SELECT SUM(salary) AS budget FROM role WHERE department_id = ?`;
+        // select all employees from the department and sum their salaries
+        const query = `SELECT SUM(salary) AS total_budget FROM employee INNER JOIN role ON employee.role_id = role.id WHERE role.department_id = ?`;
+        // const query = `SELECT SUM(salary) FROM role WHERE department_id = ?`;
         db.query(query, [userResponse.departmentID], (err, res) => {
           if (err) throw err;
           console.log(``);
-          console.log(`====================`);
-          console.log(`|   BUDGET VIEWED  |`);
-          console.log(`====================`);
+          console.log(`========================`);
+          console.log(`|   DEPARTMENT BUDGET   |`);
+          console.log(`========================`);
           console.table(res);
           firstPrompt();
         });
       });
+  });
+};
+
+const totalBudget = () => {
+  // select all employees and sum their salaries
+  const query = `SELECT SUM(salary) AS total_budget FROM employee INNER JOIN role ON employee.role_id = role.id`;
+  db.query(query, (err, res) => {
+    if (err) throw err;
+    console.log(``);
+    console.log(`====================`);
+    console.log(`|   TOTAL BUDGET   |`);
+    console.log(`====================`);
+    console.table(res);
+    firstPrompt();
   });
 };
 
@@ -529,3 +550,13 @@ const exitDB = () => {
   console.log(``);
   process.exit();
 };
+
+// SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary FROM employee
+// INNER JOIN role ON (role.id = employee.role_id)
+// INNER JOIN department ON (department.id = role.department_id)
+// ;
+
+// SELECT employee.first_name, employee.last_name, department.name AS Department, role.salary FROM employee
+// INNER JOIN role ON(role.id = employee.role_id)
+// INNER JOIN department ON(department.id = role.department_id)
+// SUM(salary) AS Total Budget FROM role WHERE department_id = ?;
