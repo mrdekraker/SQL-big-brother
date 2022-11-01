@@ -47,6 +47,7 @@ const firstPrompt = () => {
           `Delete Department`,
           `Delete Role`,
           `Delete Employee`,
+          `Department Budget Total`,
           `EXIT THE DATABASE`,
         ],
       },
@@ -95,6 +96,10 @@ const firstPrompt = () => {
 
         case `Delete Employee`:
           deleteEmployee();
+          break;
+
+        case `Department Budget Total`:
+          departmentBudget();
           break;
 
         case `EXIT THE DATABASE`:
@@ -478,6 +483,37 @@ const deleteEmployee = () => {
           console.log(`========================`);
           console.log(`|   EMPLOYEE DELETED   |`);
           console.log(`========================`);
+          console.table(res);
+          firstPrompt();
+        });
+      });
+  });
+};
+
+const departmentBudget = () => {
+  db.query(`SELECT * FROM department`, (err, response) => {
+    if (err) throw err;
+    const departmentArray = response.map((department) => ({
+      name: department.name,
+      value: department.id,
+    }));
+    inquirer
+      .prompt([
+        {
+          type: 'list',
+          message: 'What is the ID of the department you want to view?',
+          name: 'departmentID',
+          choices: departmentArray,
+        },
+      ])
+      .then((userResponse) => {
+        const query = `SELECT SUM(salary) AS budget FROM role WHERE department_id = ?`;
+        db.query(query, [userResponse.departmentID], (err, res) => {
+          if (err) throw err;
+          console.log(``);
+          console.log(`====================`);
+          console.log(`|   BUDGET VIEWED  |`);
+          console.log(`====================`);
           console.table(res);
           firstPrompt();
         });
